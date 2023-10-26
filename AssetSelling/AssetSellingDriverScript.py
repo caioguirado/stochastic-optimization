@@ -18,11 +18,13 @@ if __name__ == "__main__":
     param_list = list(params)
     sheet2 = pd.read_excel("asset_selling_policy_parameters.xlsx", sheet_name="Sheet2")
     sheet3 = pd.read_excel("asset_selling_policy_parameters.xlsx", sheet_name="Sheet3")
-    biasdf = pd.read_excel("asset_selling_policy_parameters.xlsx", sheet_name="Sheet4")
+    biasdf = pd.read_excel("asset_selling_policy_parameters.xlsx", sheet_name="Sheet4", index_col=0)
     
     
    
     policy_selected = sheet3['Policy'][0]
+    print(f'policy selected: {policy_selected}')
+
     T = sheet3['TimeHorizon'][0]
     initPrice = sheet3['InitialPrice'][0]
     initBias = sheet3['InitialBias'][0]
@@ -88,7 +90,8 @@ if __name__ == "__main__":
         ax.set_ylabel('USD', labelpad=0) # Use argument `labelpad` to move label downwards.
         ax.set_xlabel('Iterations', labelpad=10)
         
-        plt.show()
+        # plt.show()
+        plt.savefig(f'{policy_selected}_results.png')
         
     else:
         # obtain the theta values to carry out a full grid search
