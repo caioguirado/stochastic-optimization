@@ -1,12 +1,10 @@
 policies:
-  - name: 'sell low'
-    theta_0: 2
-  - name: 'high low'
-    theta_0: 4
-    theta_1: 10
+  - name: 'sell_low'
+    params: [2]
+  - name: 'high_low'
+    params: [4, 10]
   - name: 'track'
-    theta_0: 0
-    theta_1: 4
+    params: [0, 4]
 
 simulation:
   policy: 'track'
@@ -43,9 +41,9 @@ exog_params:
   up_step: 1
   down_step: -1
   variance: 2
-  bias_df: ''
-
-# 	Up	Neutral	Down
-# Up	0.9	0.1	0
-# Neutral	0.2	0.6	0.2
-# Down	0	0.1	0.9
+  bias_df:
+    columns: ['Up', 'Neutral', 'Down']
+    rows:
+      - [0.9, 0.1, 0.0]
+      - [0.2, 0.6, 0.2]
+      - [0.0, 0.1, 0.9]
