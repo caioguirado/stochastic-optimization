@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
-from environments import State
+from policies.policy import Action
+from environments.Environment import Observation
+from typing import List
 
 
 class Objective(ABC):
     @abstractmethod
-    def eval(self, state_t: State, state_t_1: State) -> float:
+    def eval(self, action: Action, observations: List[Observation]) -> float:
         pass
