@@ -1,2 +1,2 @@
-from policy import Policy
-from SellLow import SellLowPolicy
+from .policy import Policy
+from .SellLow import SellLowPolicy

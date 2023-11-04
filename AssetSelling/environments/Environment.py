@@ -9,6 +9,10 @@ class Observation:
 
 class State:
     @abstractmethod
+    def __init__(self, *args) -> None:
+        pass
+
+    @abstractmethod
     def is_terminal(self) -> bool:
         pass
 
@@ -20,12 +24,15 @@ class Environment:
     # objective (?)
 
     @abstractmethod
-    def step(self, action: Action) -> List[Observation]:
-        # return observation, reward, terminated, False, info
+    def __init__(self, init_state: State, *args) -> None:
         pass
 
     @abstractmethod
-    def reset(self):
+    def step(self, action: Action) -> List[Observation]:
+        pass
+
+    @abstractmethod
+    def reset(self) -> None:
         pass
 
     @abstractmethod
