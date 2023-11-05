@@ -24,30 +24,39 @@ class Simulation:
         self.config = config
         self.cumulative_objective = 0
         self.results = []
+        self.states = []
+        self.actions = []
+        self.rewards = []
 
     def run(self):
         # for n_iterations
         for n in tqdm(range(self.config["iterations"])):
             self.environment.reset()
             self.cumulative_objective = 0
+
+            self.states.append([])
+            self.actions.append([])
+            self.rewards.append([])
             # run full episode (environment terminal state or max T initial arg)
             for t in range(self.config["time_horizon"]):
                 # get state
                 current_state = self.environment.get_state()
+                self.states[n].append(current_state)
                 if current_state.is_terminal():
                     # compute statistics
                     break
 
                 # make decision
                 action = self.policy.eval(current_state).get_action()
+                self.actions[n].append(action)
 
                 # update environment (step)
                 observations = self.environment.step(action)
 
                 # update objective
-                self.cumulative_objective += self.objective.eval(
-                    action=action, state=current_state
-                )
+                reward = self.objective.eval(action=action, state=current_state)
+                self.cumulative_objective += reward
+                self.rewards[n].append(reward)
 
             self.results.append(self.cumulative_objective)
 
