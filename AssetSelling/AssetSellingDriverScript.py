@@ -49,8 +49,8 @@ if __name__ == "__main__":
     init_state = {"price": initPrice, "resource": 1, "bias": initBias}
     decision_names = ["sell", "hold"]
 
-    # M = AssetSellingModel(state_names, decision_names, init_state,exog_params,T)
-    # P = AssetSellingPolicy(M, policy_names)
+    M = AssetSellingModel(state_names, decision_names, init_state, exog_params, T)
+    P = AssetSellingPolicy(M, policy_names)
     t = 0
     prev_price = init_state["price"]
 

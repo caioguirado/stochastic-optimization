@@ -15,7 +15,7 @@ simulation:
   up_step: 1
   down_step: -1
   variance: 2
-  iterations: 1000
+  iterations: 10000
   print_step: 40
 
 policy_names:

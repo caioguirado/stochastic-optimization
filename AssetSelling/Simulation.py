@@ -1,5 +1,8 @@
 import yaml
+import numpy as np
+import pandas as pd
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 from argparse import ArgumentParser
 
 from environments import Environment, AssetSellingEnvironment, AssetSellingState
@@ -20,15 +23,15 @@ class Simulation:
         self.objective = objective
         self.config = config
         self.cumulative_objective = 0
+        self.results = []
 
     def run(self):
         # for n_iterations
-        for n in range(self.config["iterations"]):
-            print(f"===== iteration {n} =====")
+        for n in tqdm(range(self.config["iterations"])):
             self.environment.reset()
+            self.cumulative_objective = 0
             # run full episode (environment terminal state or max T initial arg)
             for t in range(self.config["time_horizon"]):
-                print(f"step: {t}")
                 # get state
                 current_state = self.environment.get_state()
                 if current_state.is_terminal():
@@ -46,6 +49,42 @@ class Simulation:
                     action=action, state=current_state
                 )
 
+            self.results.append(self.cumulative_objective)
+
+        # save plots
+        fig, axsubs = plt.subplots(1, 2, sharex=True, sharey=True)
+        fig.suptitle(
+            "Asset selling using policy {} with parameters {} and T {}".format(
+                self.config["policy"],
+                # policy_info[self.config['policy']],
+                "",
+                self.config["time_horizon"],
+            )
+        )
+        i = np.arange(0, config["simulation"]["iterations"], 1)
+
+        cum_avg_contrib = pd.Series(self.results).expanding().mean()
+        axsubs[0].plot(i, cum_avg_contrib, "g")
+        axsubs[0].set_title("Cumulative average contribution")
+
+        axsubs[1].plot(i, self.results, "g")
+        axsubs[1].set_title("Contribution per iteration")
+
+        # Create a big subplot
+        ax = fig.add_subplot(111, frameon=False)
+        # hide tick and tick label of the big axes
+        plt.tick_params(
+            labelcolor="none", top=False, bottom=False, left=False, right=False
+        )
+
+        ax.set_ylabel(
+            "USD", labelpad=0
+        )  # Use argument `labelpad` to move label downwards.
+        ax.set_xlabel("Iterations", labelpad=10)
+
+        # plt.show()
+        plt.savefig(f"{self.config['policy']}_results_refactored.png")
+
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -57,15 +96,12 @@ if __name__ == "__main__":
 
     init_state = AssetSellingState(**config["init_state"])
     environment = AssetSellingEnvironment(
-        init_state=init_state, exog_params=config["exog_params"]
+        init_state=init_state, exog_params=config["exog_params"], seed=20180529
     )
     sell_low_policy_params = [
         p["params"] for p in config["policies"] if p["name"] == "sell_low"
     ][0]
-    print(config["policies"])
-    print(sell_low_policy_params)
     policy = SellLowPolicy(params=sell_low_policy_params)
-    print(vars(policy))
     objective = AssetSellingObjective()
     simulation = Simulation(
         environment=environment,
